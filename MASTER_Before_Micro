@@ -701,6 +701,9 @@ const [invoiceToPay, setInvoiceToPay] = useState(null);
                   onChange={e => setFormData(prev => ({ ...prev, expiryDate: e.target.value }))}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
+                {errors.expiryDate && (
+  <p className="mt-1 text-red-500 text-sm">{errors.expiryDate}</p>
+)}
               </div>
             </div>
             <div>
@@ -1102,6 +1105,7 @@ const QuoteForm = ({ initialData, onSubmit, onCancel }) => {
 
   // 2) formData lives here
   const [formData, setFormData] = useState(blank);
+  const [errors, setErrors] = useState({});
 
   // 3) whenever initialData changes, reseed (so clicking a row actually loads it)
   useEffect(() => {
@@ -1149,9 +1153,17 @@ const QuoteForm = ({ initialData, onSubmit, onCancel }) => {
   };
 
   const handleSubmit = () => {
-    if (!formData.customerId || !formData.description || !formData.expiryDate) {
-      return alert("Please fill all required fields");
-    }
+    
+
+    const newErrors = {};
+      if (!formData.customerId)  newErrors.customerId  = "Please select a customer";
+      if (!formData.expiryDate)   newErrors.expiryDate  = "Please pick an expiry date";
+      // description is now optional—no check here
+    
+      if (Object.keys(newErrors).length) {
+        setErrors(newErrors);
+        return;
+      }
     onSubmit(formData);
   };
 
@@ -1176,6 +1188,9 @@ const QuoteForm = ({ initialData, onSubmit, onCancel }) => {
            </option>
           ))}
         </select>
+        {errors.customerId && (
+  <p className="mt-1 text-red-500 text-sm">{errors.customerId}</p>
+)}
         
         <label className="block text-sm font-medium mb-1">Description</label>
         <textarea
@@ -1302,6 +1317,8 @@ const QuoteForm = ({ initialData, onSubmit, onCancel }) => {
       amount: selectedJob ? selectedJob.estimatedCost * 1.1 : 0,
     });
 
+    const [errors, setErrors] = useState({});
+
     const handleAddItem = () => {
       setFormData({
         ...formData,
@@ -1334,12 +1351,19 @@ const QuoteForm = ({ initialData, onSubmit, onCancel }) => {
     }, [formData.items]);
 
     const handleSubmit = () => {
-      if (formData.customerId && formData.description && formData.dueDate) {
+
+   
+        const newErrors = {};
+        if (!formData.customerId)  newErrors.customerId  = "Please select a customer";
+        if (!formData.expiryDate)   newErrors.expiryDate  = "Due date is required";
+        // description is now optional—no check here
+      
+        if (Object.keys(newErrors).length) {
+          setErrors(newErrors);
+          return;
+        }
         onSubmit(formData);
-      } else {
-        addNotification("error", "Please fill in all required fields");
-      }
-    };
+      };
 
     return (
       <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-0 z-50">
@@ -1474,6 +1498,9 @@ const QuoteForm = ({ initialData, onSubmit, onCancel }) => {
                   }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
+                {errors.dueDate && (
+  <p className="mt-1 text-red-500 text-sm">{errors.dueDate}</p>
+)}
               </div>
             </div>
             <div>
